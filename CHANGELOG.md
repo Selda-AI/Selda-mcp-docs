@@ -8,15 +8,35 @@ right now. This file exists to tell you what moved.
 
 ## 2026-08-06
 
-- First public release of this repository: README, a working example client, and two loadable
-  skills.
+First public release of this repository: README, a working example client, two loadable skills, and
+generated schemas.
 
-### Known and being worked on
+**Breaking, and deliberate: a sandbox key can no longer spend.** `company.lookup`,
+`leads.enrich`, `leads.enrichBatch`, `engine.start`, `connectors.sync`, `messages.send` and
+`material.import` with `autoAdvance` now require a live key on a paid plan. Everything else stays
+open to a sandbox key, including every read and every write that pushes your own data in. If your
+integration used a sandbox key for contact lookup, it will now get a `403` with
+`code: "live_key_required:<reason>"` and a sentence explaining it.
 
-- Some functions that spend money to discover real people's contact details will move behind a live
-  key on a paid plan. A sandbox key will keep full read access to a workspace and full ability to
-  push your own data in. This changes nothing for a live key.
-- Generated tool schemas will be published under `schemas/` once that lands.
+**Removed: `projects.create`.** A workspace is created by a person in the Selda app. It is not
+gated, it is gone, and calling it returns `unknown_fn`.
+
+**Added: `events.ingest`** (`selda_ingest_event`), for pushing an event from your own site or
+product into a workspace. Matches an existing lead on email or LinkedIn, never on domain, because
+merging two colleagues cannot be undone. Returns every field on every call, so absence never has to
+be interpreted. Needs the inbound add-on.
+
+**Added: the Brain** is readable and writable (`selda_list_brain`, `selda_add_brain_item`,
+`selda_update_brain_item`, `selda_remove_brain_item`), so a workspace can be filled and grown from a
+script rather than by hand.
+
+**Clarified: `leads.add` already returned `leadId` and deduplicated on email.** The documentation
+said "New lead object", which led at least one integrator to defensively handle two shapes. The
+response shape is now published. A suppressed address returns `blocked` with a reason instead of
+silently vanishing.
+
+**Added to `GET /mcp/capabilities`:** `sandboxAllowed`, `liveOnlyReason` and `requiresEntitlement`,
+so a limit can be read rather than discovered by hitting it.
 
 ## Earlier
 

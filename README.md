@@ -119,13 +119,41 @@ a script grant the next stages one at a time, and even then it cannot send.
 
 | Path | What it is |
 |---|---|
+| [`schemas/capabilities.json`](schemas/capabilities.json) | Every function, generated from the live service |
 | [`examples/`](examples/) | A minimal working client, no dependencies |
 | [`skills/`](skills/) | Loadable skills that teach an AI client how to use Selda well |
-| `CHANGELOG.md` | Changes to the tool surface, so an integration does not break silently |
+| [`CHANGELOG.md`](CHANGELOG.md) | Changes to the tool surface, so an integration does not break silently |
 
-Schemas generated from the live service will be added here under `schemas/` once the current
-round of tool changes lands. Until then, `GET /mcp/capabilities` is the authoritative list and it
-is derived from the same dispatch tables the endpoints run on, so it cannot drift.
+`schemas/capabilities.json` is generated from `GET /mcp/capabilities`, which is itself derived from
+the same dispatch tables the endpoints run on. It cannot describe a function that does not exist,
+and it cannot omit one that does. Each entry carries its `fn`, endpoint, scope, one-line summary,
+the MCP tools that wrap it, whether a sandbox key may call it, why not when it may not, and any
+extra entitlement it needs.
+
+If the file and the live endpoint ever disagree, the endpoint is right and this repository is
+stale. Fetch it yourself in anything long-lived.
+
+## What a sandbox key can and cannot do
+
+Of the 54 functions today, **48 are open to a sandbox key** and 6 are not. The line is not "reads
+versus writes". A sandbox key can read the whole workspace **and push your own data in**: add leads
+with your own research, write the Brain, upload material, import it, draft against it. That is the
+whole product in test mode, and it is how you build something worth paying for before you pay.
+
+What a sandbox key cannot do is make the engine **produce new contact data** or reach a real person:
+
+| Function | Why a live key |
+|---|---|
+| `company.lookup` | resolves real people through paid data providers |
+| `leads.enrich`, `leads.enrichBatch` | same, per lead |
+| `engine.start` | discovery: web search, crawls, per-lead spend |
+| `connectors.sync` | pulls and enriches from an outside source |
+| `messages.send` | reaches a real recipient |
+| `material.import` **with** `autoAdvance` | the grant carries the run into contact lookup |
+
+A refused call returns `403` with a `code` you can branch on and a sentence you can show a person.
+Creating a workspace is not on either list: it happens in the Selda app, and there is no function
+for it by any key.
 
 ## Support
 

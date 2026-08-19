@@ -6,6 +6,41 @@ breaks loudly, so anything that can break yours is recorded here.
 The live capability manifest at `GET /mcp/capabilities` is always the authority on what exists
 right now. This file exists to tell you what moved.
 
+## 2026-08-20
+
+**`messages.send` never existed.** The 2026-08-06 entry below lists it among the functions that
+need a live key, and the README carried the same row. There is no such function in any dispatch
+table and none is planned: a live key buys contact data and engine runs, never a send. Sending
+happens in the Selda app after a human approves each message. The wrong line is left standing below
+rather than edited out, because anyone who read it may have planned around it.
+
+**Sixteen functions became visible.** They were dispatchable over HTTP the whole time and wrapped by
+no MCP tool, so a client could not see them. Nothing about what they do changed:
+
+`leads.delete`, `leads.deleteBatch`, `leads.merge`, `leads.addBatch`, `leads.addTag`,
+`webhooks.create`, `webhooks.list`, `webhooks.delete`, `knowledge.get`, `knowledge.set`,
+`knowledge.append`, `messages.approve`, `messages.generate`, `replies.classify`,
+`projects.updateContext`, `connectors.list`.
+
+**`events.ingest` takes `autoAdvance`.** With it, an arriving lead does not just get stored: Selda
+reads the workspace's Brain, writes the reply in the language the enquiry was written in, and leaves
+it in the Sales Inbox. It sends nothing. Off by default, because it spends. With no Brain material
+to answer from it drafts nothing and reports `no_brain_material` — an invented price approved by
+somebody who assumed Selda knew the real one is worse than no draft.
+
+**Two new webhook events: `draft.ready` and `draft.failed`.** Every other event reports what already
+happened, so the surface was pull-only. `draft.ready` is how you learn there is something waiting to
+approve.
+
+**Non-ASCII form fields no longer throw.** A field named `Sähköposti` failed the whole
+`events.ingest` call with `invalid character 'ä'`, so a Finnish or German site's enquiry was lost
+while the visitor saw a thank-you page. Keys are folded server-side and the original spelling is
+kept alongside, so nothing is dropped and no integration has to transliterate on its way out.
+
+**`leads.skip` now says that it deletes.** Its summary read "Skip a lead (legacy path)" while the
+function removed the lead and every message on it. Behaviour unchanged; the description was wrong.
+It also needs a Clerk session and cannot be reached by any API key — use `leads.delete`.
+
 ## 2026-08-06
 
 First public release of this repository: README, a working example client, two loadable skills, and

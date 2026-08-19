@@ -18,6 +18,8 @@ When the two disagree, the live capability manifest described below is right.
 | Push research you already did into Selda so it writes from your material | `selda_add_lead` with an `analysis` field, or upload files and import them |
 | Run the full pipeline from a brief and read the drafts it produced | `selda_run_pipeline`, then poll `selda_get_run_status` |
 | Receive replies as they arrive instead of polling | Register an outbound webhook for `reply.received` |
+| Have an arriving enquiry answered before anyone looks at it | `selda_ingest_event` with `autoAdvance`, then listen for `draft.ready` |
+| Clear the rows a trial install left behind | `selda_delete_lead`, or `selda_merge_leads` for a duplicate |
 
 ## What you cannot do with it, on purpose
 
@@ -148,8 +150,14 @@ What a sandbox key cannot do is make the engine **produce new contact data** or 
 | `leads.enrich`, `leads.enrichBatch` | same, per lead |
 | `engine.start` | discovery: web search, crawls, per-lead spend |
 | `connectors.sync` | pulls and enriches from an outside source |
-| `messages.send` | reaches a real recipient |
+| `runs.confirmCompanies` | confirms a run's company list, which starts the paid work |
+| `runs.startFromLeads` | writes a message per lead you pushed in |
 | `material.import` **with** `autoAdvance` | the grant carries the run into contact lookup |
+
+This table listed `messages.send` until 20.8.2026. **No such function exists in any dispatch table
+and none is planned** — a live key buys the calls above, which spend money or reach a data provider,
+never the one that reaches a recipient. The line is corrected here rather than quietly deleted,
+because anyone who read it may have planned around it.
 
 A refused call returns `403` with a `code` you can branch on and a sentence you can show a person.
 Creating a workspace is not on either list: it happens in the Selda app, and there is no function

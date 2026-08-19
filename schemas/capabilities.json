@@ -1,28 +1,184 @@
 {
-  "generated": "2026-08-06",
+  "generated": "2026-08-20",
   "source": "GET /mcp/capabilities — derived from the same dispatch tables the endpoints run on",
-  "note": "Every fn is POSTed to its endpoint as { fn, args } with Authorization: Bearer sk_live_… . The key binds the call to one workspace org; never pass orgId yourself. Nothing in this list sends outreach without approval in the Selda app.",
-  "count": 54,
+  "note": "Every fn is POSTed to its endpoint as { fn, args } with Authorization: Bearer sk_test_… or sk_live_… . The key binds the call to one workspace org; never pass orgId yourself. TEST KEYS ARE FREE and are not gated on a plan or an invoice: you can build the whole integration, push in leads, knowledge and events, read everything back and edit drafts, on any plan. The entries marked sandboxAllowed:false are the ones that spend real money or reach real people (contact lookup, enrichment, connector sync, running the engine): those need a live workspace on a paid plan, and each one states its reason in liveOnlyReason. Nothing in this list sends outreach: sending happens only in the Selda app, after a human approves.",
+  "count": 61,
   "capabilities": [
     {
-      "fn": "POST /mcp/material/upload",
-      "endpoint": "/mcp/material/upload",
-      "scope": "pipeline",
-      "summary": "Raw file bytes in, storageId out. Send the file's path in X-Selda-Path — that path is how Selda maps a file to a company. Then hand the ids to material.import.",
+      "fn": "projects.list",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "Your workspaces. Start here. Every other fn needs a projectId.",
       "mcpTools": [
-        "selda_upload_material"
+        "selda_list_projects"
       ],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
       "liveOnlyReason": null
     },
     {
-      "fn": "brain.add",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Add one thing Selda should know: a product, a partner, a reference, a company fact, a note, or something it must never say.",
+      "fn": "projects.get",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "One workspace in full: business context, market analysis, ICP, settings.",
       "mcpTools": [
-        "selda_add_brain_item"
+        "selda_get_project"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "leads.list",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "Leads in a workspace.",
+      "mcpTools": [
+        "selda_list_leads"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "leads.get",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "One lead in full: research, fit, outreach angle, notes.",
+      "mcpTools": [
+        "selda_get_lead"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "campaigns.list",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "Campaigns in a workspace.",
+      "mcpTools": [
+        "selda_list_campaigns"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "campaigns.get",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "One campaign: status, channels, settings, leads.",
+      "mcpTools": [
+        "selda_get_campaign"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "campaigns.stats",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "Campaign counters: sent, delivered, opened, clicked, replied, bounced.",
+      "mcpTools": [
+        "selda_campaign_stats"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "runs.status",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "Status of one campaign run: phase, companies found, contacts resolved, drafts written, errors.",
+      "mcpTools": [
+        "selda_get_run_status"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "runs.list",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "Every campaign run in a project, newest first, with its status. Use it to find a runId you no longer have.",
+      "mcpTools": [
+        "selda_list_runs"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "runs.leads",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "The companies a run found, each with the message Selda drafted for it. Nothing is sent.",
+      "mcpTools": [
+        "selda_get_run_leads"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "messages.byProject",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "Messages in a workspace.",
+      "mcpTools": [
+        "selda_list_messages"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "messages.byLead",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "The whole thread with one lead, sent and received.",
+      "mcpTools": [
+        "selda_get_thread"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "credits.info",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "Credit balance, daily free credits, usage, plan.",
+      "mcpTools": [
+        "selda_credits"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "connectors.list",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "Data connectors registered for this workspace.",
+      "mcpTools": [
+        "selda_list_connectors"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "knowledge.get",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "What Selda knows about your business: the prose that grounds every message.",
+      "mcpTools": [
+        "selda_get_knowledge"
       ],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
@@ -41,25 +197,177 @@
       "liveOnlyReason": null
     },
     {
-      "fn": "brain.remove",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Take one Brain item back out. The human owns what Selda knows.",
+      "fn": "webhooks.list",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "Outbound webhook endpoints registered for this workspace.",
       "mcpTools": [
-        "selda_remove_brain_item"
+        "selda_list_webhooks"
       ],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
       "liveOnlyReason": null
     },
     {
-      "fn": "brain.update",
+      "fn": "events.ingest",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Rewrite the title and body of one Brain item.",
+      "summary": "Report that something happened outside Selda (a form, an analysis, an ad response). Creates the lead if new, recognises it if known, records it on the timeline, and can put it on a campaign's review list. Pass autoAdvance to have Selda write the reply from the Brain straight away and leave it in the Sales Inbox — draft.ready is published when it is there. It never sends.",
       "mcpTools": [
-        "selda_update_brain_item"
+        "selda_ingest_event"
       ],
+      "requiresEntitlement": "inboundIntake",
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "leads.add",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Add one company/contact. Pass `analysis` with research you already did and the message is written from it instead of a fresh crawl.",
+      "mcpTools": [
+        "selda_add_lead"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "leads.addBatch",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Add many companies/contacts in one call.",
+      "mcpTools": [
+        "selda_add_leads"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "leads.addTag",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Tag a lead.",
+      "mcpTools": [
+        "selda_tag_lead"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "replies.draft",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Write a reply draft into a lead's Sales Inbox thread. A person reviews and sends it in the app — this can send nothing.",
+      "mcpTools": [
+        "selda_draft_reply"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "inbox.addMessage",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Put one message into a lead's Sales Inbox thread, in either direction, even for somebody who was never in a campaign. Creates the lead if it is new. This can send nothing.",
+      "mcpTools": [
+        "selda_add_inbox_message"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "leads.addAlias",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Claim another email address for a lead, so a reply from it lands in the same conversation. Also adopts that address's earlier unlinked inbound.",
+      "mcpTools": [
+        "selda_add_lead_alias"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "leads.update",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Edit a lead's fields, including its status. Org-scoped, so an API key can reach it.",
+      "mcpTools": [
+        "selda_update_lead"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "leads.delete",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Remove one lead. Deleting is the caller's act — Selda never removes a lead on its own.",
+      "mcpTools": [
+        "selda_delete_lead"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "leads.deleteBatch",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Remove many leads.",
+      "mcpTools": [
+        "selda_delete_leads"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "leads.merge",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Merge duplicate leads.",
+      "mcpTools": [
+        "selda_merge_leads"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "projects.updateContext",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Rewrite a workspace's business context.",
+      "mcpTools": [
+        "selda_update_project_context"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "campaigns.create",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Create a campaign (legacy table, not the one the app's campaign-flow UI reads).",
+      "mcpTools": [],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "campaigns.update",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Change a campaign.",
+      "mcpTools": [],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
       "liveOnlyReason": null
@@ -95,92 +403,64 @@
       "liveOnlyReason": null
     },
     {
-      "fn": "campaigns.approve",
+      "fn": "drafts.update",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Approve a campaign (legacy path).",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "campaigns.create",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Create a campaign (legacy table — not the one the app's campaign-flow UI reads).",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "campaigns.get",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "One campaign: status, channels, settings, leads.",
+      "summary": "Rewrite the draft on one run lead. Refuses a message that already went out; never sends.",
       "mcpTools": [
-        "selda_get_campaign"
+        "selda_update_draft"
       ],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
       "liveOnlyReason": null
     },
     {
-      "fn": "campaigns.list",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "Campaigns in a workspace.",
-      "mcpTools": [
-        "selda_list_campaigns"
-      ],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "campaigns.pause",
+      "fn": "runs.archive",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Change campaign status (legacy path).",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "campaigns.stats",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "Campaign counters: sent, delivered, opened, clicked, replied, bounced.",
+      "summary": "Close a campaign run and take it off the active list. Keeps every contact and every message — deleting contacts stays a human act in the app.",
       "mcpTools": [
-        "selda_campaign_stats"
+        "selda_archive_run"
       ],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
       "liveOnlyReason": null
     },
     {
-      "fn": "campaigns.update",
+      "fn": "runs.rename",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Change a campaign.",
-      "mcpTools": [],
+      "summary": "Give a campaign run a name a person would recognise. An empty name restores the derived title.",
+      "mcpTools": [
+        "selda_rename_campaign"
+      ],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
       "liveOnlyReason": null
     },
     {
-      "fn": "company.lookup",
-      "endpoint": "/mcp/run",
-      "scope": "pipeline",
-      "summary": "Resolve a company and return the right people to reach. Starts nothing.",
+      "fn": "drafts.remove",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Take one draft out of a run so it cannot be sent. The row stays visible with your reason and the app can put it back. Refuses a message that already went out.",
       "mcpTools": [
-        "selda_lookup"
+        "selda_remove_draft"
       ],
       "requiresEntitlement": null,
-      "sandboxAllowed": false,
-      "liveOnlyReason": "paid_contact_data"
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "messages.approve",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Approve a drafted message. Approval only. It does not send.",
+      "mcpTools": [
+        "selda_approve_message"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
     },
     {
       "fn": "connectors.create",
@@ -203,11 +483,153 @@
       "liveOnlyReason": null
     },
     {
-      "fn": "connectors.list",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "Data connectors registered for this workspace.",
+      "fn": "knowledge.set",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Replace what Selda knows about your business.",
+      "mcpTools": [
+        "selda_set_knowledge"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "brain.add",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Add one thing Selda should know: a product, a partner, a reference, a company fact, a note, or something it must never say.",
+      "mcpTools": [
+        "selda_add_brain_item"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "brain.update",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Rewrite the title and body of one Brain item.",
+      "mcpTools": [
+        "selda_update_brain_item"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "brain.remove",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Take one Brain item back out. The human owns what Selda knows.",
+      "mcpTools": [
+        "selda_remove_brain_item"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "knowledge.append",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Add to what Selda knows about your business.",
+      "mcpTools": [
+        "selda_append_knowledge"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "webhooks.create",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Register an endpoint for events like reply.received.",
+      "mcpTools": [
+        "selda_create_webhook"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "webhooks.delete",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Remove a webhook endpoint.",
+      "mcpTools": [
+        "selda_delete_webhook"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "runs.confirmCompanies",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Confirm a run's company list so Selda finds the decision-makers and drafts the messages. Spends credits. Sends nothing — the send is still a human press in the app.",
+      "mcpTools": [
+        "selda_confirm_companies"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": false,
+      "liveOnlyReason": "paid_engine_run"
+    },
+    {
+      "fn": "leads.updateStatus",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Set a lead's status (legacy path, Clerk-authenticated — an API key cannot reach this; the MCP tool uses the org-scoped leads.update).",
       "mcpTools": [],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "leads.skip",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "DELETES a lead and every message on it (legacy path, Clerk-authenticated — an API key cannot reach this; use leads.delete instead).",
+      "mcpTools": [],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "company.lookup",
+      "endpoint": "/mcp/run",
+      "scope": "pipeline",
+      "summary": "Resolve a company and return the right people to reach. Starts nothing.",
+      "mcpTools": [
+        "selda_lookup"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": false,
+      "liveOnlyReason": "paid_contact_data"
+    },
+    {
+      "fn": "messages.generate",
+      "endpoint": "/mcp/run",
+      "scope": "pipeline",
+      "summary": "Draft a message for a lead.",
+      "mcpTools": [
+        "selda_generate_message"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "replies.classify",
+      "endpoint": "/mcp/run",
+      "scope": "pipeline",
+      "summary": "Classify inbound replies.",
+      "mcpTools": [
+        "selda_classify_replies"
+      ],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
       "liveOnlyReason": null
@@ -221,124 +643,6 @@
       "requiresEntitlement": null,
       "sandboxAllowed": false,
       "liveOnlyReason": "external_sync"
-    },
-    {
-      "fn": "credits.info",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "Credit balance, daily free credits, usage, plan.",
-      "mcpTools": [
-        "selda_credits"
-      ],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "engine.start",
-      "endpoint": "/mcp/run",
-      "scope": "pipeline",
-      "summary": "The full pipeline from a brief: find companies → research → fit → hook → draft.",
-      "mcpTools": [
-        "selda_run_pipeline"
-      ],
-      "requiresEntitlement": null,
-      "sandboxAllowed": false,
-      "liveOnlyReason": "paid_engine_run"
-    },
-    {
-      "fn": "events.ingest",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Report that something happened outside Selda (a form, an analysis, an ad response). Creates the lead if new, recognises it if known, records it on the timeline, and can put it on a campaign's review list. It never sends.",
-      "mcpTools": [
-        "selda_ingest_event"
-      ],
-      "requiresEntitlement": "inboundIntake",
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "knowledge.append",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Add to what Selda knows about your business.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "knowledge.get",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "What Selda knows about your business — the prose that grounds every message.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "knowledge.set",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Replace what Selda knows about your business.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "leads.add",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Add one company/contact. Pass `analysis` with research you already did and the message is written from it instead of a fresh crawl.",
-      "mcpTools": [
-        "selda_add_lead"
-      ],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "leads.addBatch",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Add many companies/contacts in one call.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "leads.addTag",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Tag a lead.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "leads.delete",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Remove one lead.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "leads.deleteBatch",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Remove many leads.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
     },
     {
       "fn": "leads.enrich",
@@ -361,70 +665,28 @@
       "liveOnlyReason": "paid_contact_data"
     },
     {
-      "fn": "leads.get",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "One lead in full: research, fit, outreach angle, notes.",
+      "fn": "engine.start",
+      "endpoint": "/mcp/run",
+      "scope": "pipeline",
+      "summary": "The full pipeline from a brief: find companies → research → fit → hook → draft. It STOPS at the company list (run status `awaiting_profile`) and waits for a person to confirm the companies and the decision-maker roles in the Selda app. Poll `runs.status` and read `awaitingHuman`. Nothing is ever sent from here.",
       "mcpTools": [
-        "selda_get_lead"
+        "selda_run_pipeline"
       ],
       "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
+      "sandboxAllowed": false,
+      "liveOnlyReason": "paid_engine_run"
     },
     {
-      "fn": "leads.list",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "Leads in a workspace.",
+      "fn": "runs.startFromLeads",
+      "endpoint": "/mcp/run",
+      "scope": "pipeline",
+      "summary": "Start a campaign from leads already pushed in with selda_add_lead, selected by the source label you gave them. No discovery — Selda writes a message per lead from the analysis that came with it, and stops at the drafts.",
       "mcpTools": [
-        "selda_list_leads"
+        "selda_start_campaign_from_leads"
       ],
       "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "leads.merge",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Merge duplicate leads.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "leads.skip",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Skip a lead (legacy path).",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "leads.update",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Edit a lead's fields.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "leads.updateStatus",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Set a lead's status (legacy path — Clerk-authenticated).",
-      "mcpTools": [
-        "selda_update_lead"
-      ],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
+      "sandboxAllowed": false,
+      "liveOnlyReason": "paid_engine_run"
     },
     {
       "fn": "material.import",
@@ -439,151 +701,13 @@
       "liveOnlyReason": null
     },
     {
-      "fn": "messages.approve",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Approve a drafted message. Approval only — it does not send.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "messages.byLead",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "The whole thread with one lead, sent and received.",
-      "mcpTools": [
-        "selda_get_thread"
-      ],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "messages.byProject",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "Messages in a workspace.",
-      "mcpTools": [
-        "selda_list_messages"
-      ],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "messages.generate",
-      "endpoint": "/mcp/run",
+      "fn": "POST /mcp/material/upload",
+      "endpoint": "/mcp/material/upload",
       "scope": "pipeline",
-      "summary": "Draft a message for a lead.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "messages.send",
-      "endpoint": "/mcp/run",
-      "scope": "pipeline",
-      "summary": "Send one specific message. The one fn here that reaches a real person.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": false,
-      "liveOnlyReason": "sending"
-    },
-    {
-      "fn": "projects.get",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "One workspace in full: business context, market analysis, ICP, settings.",
+      "summary": "Raw file bytes in, storageId out. Send the file's path in X-Selda-Path. That path is how Selda maps a file to a company. Then hand the ids to material.import.",
       "mcpTools": [
-        "selda_get_project"
+        "selda_upload_material"
       ],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "projects.list",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "Your workspaces. Start here — every other fn needs a projectId.",
-      "mcpTools": [
-        "selda_list_projects"
-      ],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "projects.updateContext",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Rewrite a workspace's business context.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "replies.classify",
-      "endpoint": "/mcp/run",
-      "scope": "pipeline",
-      "summary": "Classify inbound replies.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "replies.draft",
-      "endpoint": "/mcp/run",
-      "scope": "pipeline",
-      "summary": "Draft an answer to a reply.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "runs.status",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "Status of one campaign run: phase, companies found, contacts resolved, drafts written, errors.",
-      "mcpTools": [
-        "selda_get_run_status"
-      ],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "webhooks.create",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Register an endpoint for events like reply.received.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "webhooks.delete",
-      "endpoint": "/mcp/mutate",
-      "scope": "write",
-      "summary": "Remove a webhook endpoint.",
-      "mcpTools": [],
-      "requiresEntitlement": null,
-      "sandboxAllowed": true,
-      "liveOnlyReason": null
-    },
-    {
-      "fn": "webhooks.list",
-      "endpoint": "/mcp/query",
-      "scope": "read",
-      "summary": "Outbound webhook endpoints registered for this workspace.",
-      "mcpTools": [],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
       "liveOnlyReason": null

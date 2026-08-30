@@ -22,7 +22,7 @@ and the difference shows in the message.
 selda_add_lead {
   projectId: "...",
   company: "Filterit Oy",
-  website: "https://filterit.fi",
+  companyDomain: "filterit.fi",
   email: "etunimi@filterit.fi",
   analysis: "Three production lines. Posted in March about unplanned downtime.
              Their maintenance is outsourced and the contract renews in autumn."

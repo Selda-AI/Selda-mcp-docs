@@ -6,6 +6,38 @@ breaks loudly, so anything that can break yours is recorded here.
 The live capability manifest at `GET /mcp/capabilities` is always the authority on what exists
 right now. This file exists to tell you what moved.
 
+## 2026-08-30
+
+**MCP and the API are on every plan, the free one included.** Creating a key was never gated on a
+tier, but nothing published said so, and the previous wording ("live keys require a paid plan") read
+as if you had to buy something before you could connect a client at all. You do not. A free
+workspace mints a `sk_test_` key and reaches the whole surface except the functions that spend money
+or resolve real people.
+
+**The refusal on those functions is about who pays, not which prefix you hold.** A sandbox key on a
+workspace whose plan includes the API, with its invoice paid, may call `company.lookup`,
+`leads.enrich`, `leads.enrichBatch`, `engine.start`, `connectors.sync`, `runs.confirmCompanies` and
+`runs.startFromLeads`, and spends that workspace's own credits doing it. Nothing about the send
+boundary moved: no key of any kind can send.
+
+**Eleven functions added, none removed or changed.** `campaigns.messageStructure`,
+`campaigns.setMessageStructure` and `campaigns.lockMessageStructure` state what a campaign's message
+is made of and lock it so nothing rewrites it. `flows.list`, `flows.runs`, `flows.create`,
+`flows.update`, `flows.setEnabled`, `flows.delete` and `flows.saveSkill` reach the flow builder.
+`replies.preview` drafts a reply without writing it into a thread. The manifest went from 61
+functions to 72, of which 65 are open to a sandbox key.
+
+**`/v1/` aliases documented.** `/v1/mcp/query`, `/v1/mcp/mutate`, `/v1/mcp/run`,
+`/v1/mcp/material/upload` and `/v1/mcp/capabilities` have always pointed at the same handlers as the
+unversioned paths. Both are kept; `/v1/` is the seam where a behaviour change would appear.
+
+**`leads.add` takes `companyDomain`, not `website`.** The example client and the research-handoff
+skill both passed `website`, which the function does not declare and Convex rejects, so anyone who
+copied them got an argument error on their first call. Fixed in both.
+
+**The settings path is Settings → Connections → MCP server.** It was written as "Settings → Apps →
+API key", which no longer matches the app.
+
 ## 2026-08-20
 
 **`messages.send` never existed.** The 2026-08-06 entry below lists it among the functions that

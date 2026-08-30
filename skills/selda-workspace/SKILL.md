@@ -5,9 +5,10 @@ description: Drive a Selda go-to-market workspace. Use when the user wants to fi
 
 # Selda workspace
 
-Selda is a go-to-market engine. It works out who to reach, researches each company, and writes
-messages that do not read as AI. The app is at https://app.selda.ai. Every call is scoped to the
-organization that owns the API key, so never pass `orgId` or `userId`.
+Others give you a list. Selda gets you the conversation: it works out who to reach, researches each
+company, writes every message from that research, and carries the thread to a customer, a quote, or
+a meeting. A person approves every send. The app is at https://app.selda.ai. Every call is scoped
+to the organization that owns the API key, so never pass `orgId` or `userId`.
 
 ## Golden rules
 
@@ -45,7 +46,7 @@ organization that owns the API key, so never pass `orgId` or `userId`.
 - `selda_run_pipeline` runs the engine from a brief: find companies, research, judge fit, find the
   angle, draft the message
 - `selda_lookup` resolves one company and returns the right people to reach, without starting
-  anything. Uses paid data, so it needs a live key on a paid plan.
+  anything. Uses paid data, so it needs a workspace whose plan includes the API.
 - `selda_upload_material` then `selda_import_material` turns a folder of your own research into a
   reviewable campaign
 
@@ -66,13 +67,16 @@ Sends are an input, not a result.
 
 ## When a call is refused
 
-Some functions need a live key on a paid plan, because they spend money to discover real people.
-The error message says which, in a sentence. Relay it as written and offer what the sandbox can
-still do, which is adding companies the user already has and drafting against them. Do not retry
-the same call hoping for a different answer.
+A handful of functions spend money to discover real people, so a workspace that has not bought the
+API is refused them. The error message says which, in a sentence. Relay it as written and offer
+what the sandbox can still do, which is adding companies the user already has and drafting against
+them. Do not retry the same call hoping for a different answer.
+
+Connecting at all is not the gate: MCP and the API are on every plan, the free one included.
 
 ## Voice
 
 When you draft or summarise outreach: one concrete idea, one real observation about that specific
-prospect, one ask. No template feel. No "I hope this email finds you well". No em dashes. Selda
-wins by understanding the prospect first, so make sure that understanding is visible in the words.
+prospect, one ask. No template feel. No "I hope this email finds you well". No em dashes. The
+whole point is that it reads as a conversation somebody started, not an entry off a list, so make
+sure the research is visible in the words.

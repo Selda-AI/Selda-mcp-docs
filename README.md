@@ -2,10 +2,15 @@
 
 Connect an AI client to a [Selda](https://selda.ai) workspace.
 
-Selda is a GTM engine: it finds the right companies, researches each one, writes messages that do
-not read as AI, and sends them from your own inbox in your customer's language. This repository is
-the machine readable documentation for driving that engine from outside the app, over the
+Others give you a list. Selda gets you the conversation: you say who you want, and it finds the
+right people, writes each message from real research, and carries the thread to a customer, a
+quote, or a meeting. A person approves every send. This repository is the machine readable
+documentation for driving that engine from outside the app, over the
 [Model Context Protocol](https://modelcontextprotocol.io) or plain HTTP.
+
+**MCP and the API are on every plan, the free one included.** There is no tier to reach before you
+can connect a client — see [Keys, scopes and isolation](#keys-scopes-and-isolation) for what a key
+on a free workspace can do.
 
 The narrative documentation lives at **[docs.selda.ai/reference/mcp](https://docs.selda.ai/reference/mcp)**.
 When the two disagree, the live capability manifest described below is right.
@@ -45,7 +50,8 @@ Nothing to paste.
 
 ### A static key, for Claude Code, scripts and CI
 
-Create a key in the Selda app under **Settings → Apps → API key**. The full key is shown once.
+Create a key in the Selda app under **Settings → Connections → MCP server**. The full key is shown
+once.
 
 ```bash
 claude mcp add --transport http selda https://mcp.selda.ai/api/mcp \
@@ -69,12 +75,22 @@ Every call is bound to the organization that owns the key. The org id is injecte
 the validated key and an `orgId` in your request body is ignored. One organization's key cannot
 reach another organization's data.
 
-Sandbox keys run the product in test mode and cannot send. Live keys require a paid plan. The
-capability manifest is the authority on which functions a given key may call.
+**Every plan can connect, the free one included.** Creating a key is not gated on a tier or an
+invoice. A workspace standing in test mode always mints `sk_test_`; a workspace approved for live
+always mints `sk_live_`. The prefix states the environment and grants nothing on its own — every
+gate reads the stored environment and the workspace's live entitlements, re-resolved on each
+request.
+
+So on a free workspace you get a test key that reaches the whole surface except the handful of
+functions that spend money or resolve real people. That is enough to build the entire integration
+before anything is real. The capability manifest is the authority on which functions a given key may
+call.
 
 ## The HTTP API underneath
 
 The MCP tools are a curated front end over an HTTP API you can call directly.
+
+The base is `https://api.selda.ai`.
 
 | Endpoint | Method | Purpose |
 |---|---|---|
@@ -83,6 +99,11 @@ The MCP tools are a curated front end over an HTTP API you can call directly.
 | `/mcp/run` | POST | pipeline and engine actions |
 | `/mcp/material/upload` | POST | raw file bytes in, a storage id out |
 | `/mcp/capabilities` | GET | the capability manifest, no key needed |
+
+Every one of these also answers on a `/v1/` alias — `/v1/mcp/query`, `/v1/mcp/mutate`,
+`/v1/mcp/run`, `/v1/mcp/material/upload`, `/v1/mcp/capabilities` — pointing at the same handler.
+The unversioned paths are kept for good and will not break; `/v1/` is the seam where anything that
+changes behaviour would appear, so prefer it in something long-lived.
 
 The body is always `{ "fn": "...", "args": { ... } }`. A success is `{ "value": … }`; a failure is
 `{ "error": { "type", "code", "message", "request_id" } }` with a non-200 status.
@@ -137,14 +158,19 @@ stale. Fetch it yourself in anything long-lived.
 
 ## What a sandbox key can and cannot do
 
-Of the 54 functions today, **48 are open to a sandbox key** and 6 are not. The line is not "reads
-versus writes". A sandbox key can read the whole workspace **and push your own data in**: add leads
-with your own research, write the Brain, upload material, import it, draft against it. That is the
-whole product in test mode, and it is how you build something worth paying for before you pay.
+Of the 72 functions the manifest published on 30.8.2026, **65 were open to a sandbox key** and 7
+were not. Those figures move whenever the surface does, so read them off
+`GET /mcp/capabilities` rather than off this paragraph — the manifest is authoritative and this
+number is a snapshot.
+
+The line is not "reads versus writes". A sandbox key can read the whole workspace **and push your
+own data in**: add leads with your own research, write the Brain, upload material, import it, draft
+against it. That is the whole product in test mode, and it is how you build something worth paying
+for before you pay.
 
 What a sandbox key cannot do is make the engine **produce new contact data** or reach a real person:
 
-| Function | Why a live key |
+| Function | Why it costs |
 |---|---|
 | `company.lookup` | resolves real people through paid data providers |
 | `leads.enrich`, `leads.enrichBatch` | same, per lead |
@@ -153,6 +179,13 @@ What a sandbox key cannot do is make the engine **produce new contact data** or 
 | `runs.confirmCompanies` | confirms a run's company list, which starts the paid work |
 | `runs.startFromLeads` | writes a message per lead you pushed in |
 | `material.import` **with** `autoAdvance` | the grant carries the run into contact lookup |
+
+**The question these ask is who pays, not which prefix you hold.** A sandbox key belonging to a
+workspace that already has the API on its plan, with its invoice paid, may call every row above and
+spends that workspace's own credits doing it. The refusal is aimed at a free account scripting
+Selda into a contact-data API at Selda's expense — not at a paying customer working in a sandbox.
+`material.import` is the one row that is conditional on its arguments rather than on the function,
+so it reports `sandboxAllowed: true` in the manifest and refuses only when `autoAdvance` is passed.
 
 This table listed `messages.send` until 20.8.2026. **No such function exists in any dispatch table
 and none is planned** — a live key buys the calls above, which spend money or reach a data provider,

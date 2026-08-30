@@ -2,13 +2,14 @@
 //
 //   SELDA_API_BASE=https://... SELDA_API_KEY=sk_live_... node selda.mjs
 //
-// Find both values in the Selda app under Settings → Apps → API key.
+// The key is in the Selda app under Settings → Connections → MCP server; the base is
+//   https://api.selda.ai (or https://api.selda.ai/v1 for the versioned paths).
 
 const BASE = process.env.SELDA_API_BASE;
 const KEY = process.env.SELDA_API_KEY;
 
 if (!BASE || !KEY) {
-  console.error("Set SELDA_API_BASE and SELDA_API_KEY. Both are in Settings → Apps → API key.");
+  console.error("Set SELDA_API_BASE (https://api.selda.ai) and SELDA_API_KEY (Settings → Connections → MCP server).");
   process.exit(1);
 }
 
@@ -55,7 +56,8 @@ console.log(`Workspace: ${projects[0].name}`);
 await selda("mutate", "leads.add", {
   projectId,
   company: "Example Oy",
-  website: "https://example.com",
+  // `companyDomain`, not `website`: an argument the function does not declare is rejected.
+  companyDomain: "example.com",
   email: "hello@example.com",
   analysis: "They opened a second location in March and are hiring two installers.",
 });

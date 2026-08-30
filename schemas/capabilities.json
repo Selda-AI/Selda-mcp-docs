@@ -1,8 +1,8 @@
 {
-  "generated": "2026-08-20",
+  "generated": "2026-08-30",
   "source": "GET /mcp/capabilities — derived from the same dispatch tables the endpoints run on",
   "note": "Every fn is POSTed to its endpoint as { fn, args } with Authorization: Bearer sk_test_… or sk_live_… . The key binds the call to one workspace org; never pass orgId yourself. TEST KEYS ARE FREE and are not gated on a plan or an invoice: you can build the whole integration, push in leads, knowledge and events, read everything back and edit drafts, on any plan. The entries marked sandboxAllowed:false are the ones that spend real money or reach real people (contact lookup, enrichment, connector sync, running the engine): those need a live workspace on a paid plan, and each one states its reason in liveOnlyReason. Nothing in this list sends outreach: sending happens only in the Selda app, after a human approves.",
-  "count": 61,
+  "count": 72,
   "capabilities": [
     {
       "fn": "projects.list",
@@ -35,6 +35,18 @@
       "summary": "Leads in a workspace.",
       "mcpTools": [
         "selda_list_leads"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "campaigns.messageStructure",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "Read what a campaign's message is made of: every block, which ones ship verbatim, the instruction behind each generated one, the shape, and whether it is locked.",
+      "mcpTools": [
+        "selda_get_message_structure"
       ],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
@@ -197,6 +209,30 @@
       "liveOnlyReason": null
     },
     {
+      "fn": "flows.list",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "The flows in a workspace: what runs when something arrives from outside, the steps in order, and whether each is switched on. Includes the workspace's flow instruction files.",
+      "mcpTools": [
+        "selda_list_flows"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "flows.runs",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "What a flow actually did, run by run, step by step, including the steps that did nothing and why.",
+      "mcpTools": [
+        "selda_flow_runs"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
       "fn": "webhooks.list",
       "endpoint": "/mcp/query",
       "scope": "read",
@@ -251,6 +287,30 @@
       "summary": "Tag a lead.",
       "mcpTools": [
         "selda_tag_lead"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "campaigns.setMessageStructure",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "State what a campaign's message is made of: blocks that ship WORD FOR WORD, blocks Selda writes from an instruction you give it, the paragraph count, and what must never appear. Refuses to change a locked structure. Sends nothing.",
+      "mcpTools": [
+        "selda_set_message_structure"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "campaigns.lockMessageStructure",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Lock a campaign's message structure so every locked block ships exactly as written and nothing rewrites it, or unlock it with locked: false. Sends nothing.",
+      "mcpTools": [
+        "selda_lock_message_structure"
       ],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
@@ -567,6 +627,66 @@
       "liveOnlyReason": null
     },
     {
+      "fn": "flows.create",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Create a flow: a trigger plus the steps to run when something arrives. Off unless you say otherwise. No step can send.",
+      "mcpTools": [
+        "selda_create_flow"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "flows.update",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Rewrite a flow's name, trigger or steps.",
+      "mcpTools": [
+        "selda_update_flow"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "flows.setEnabled",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Switch a flow on or off.",
+      "mcpTools": [
+        "selda_set_flow_enabled"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "flows.delete",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Delete a flow and its run log.",
+      "mcpTools": [
+        "selda_delete_flow"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "flows.saveSkill",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Write or rewrite an instruction file a flow step reads: how this business decides what an enquiry is.",
+      "mcpTools": [
+        "selda_save_flow_skill"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
       "fn": "runs.confirmCompanies",
       "endpoint": "/mcp/mutate",
       "scope": "write",
@@ -617,6 +737,18 @@
       "summary": "Draft a message for a lead.",
       "mcpTools": [
         "selda_generate_message"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "replies.preview",
+      "endpoint": "/mcp/run",
+      "scope": "pipeline",
+      "summary": "Ask how Selda would answer an enquiry, from this workspace's Brain, without creating a lead or storing a draft. Same writer the real reply uses, so tuning against this tunes the real thing. Stores nothing and sends nothing.",
+      "mcpTools": [
+        "selda_preview_reply"
       ],
       "requiresEntitlement": null,
       "sandboxAllowed": true,

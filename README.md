@@ -48,6 +48,29 @@ https://mcp.selda.ai/api/mcp
 The server advertises OAuth, so the client walks you through logging in and picking a workspace.
 Nothing to paste.
 
+`initialize` echoes your protocol version when it is one of `2025-06-18`, `2025-03-26` or
+`2024-11-05`, so any current client connects without negotiating down.
+
+#### In ChatGPT
+
+**Settings → Connectors → Add**, same address. ChatGPT only calls a connector that exposes two
+tools named `search` and `fetch`, with fixed shapes. Selda exposes both, so there is nothing extra
+to do:
+
+```jsonc
+// search({ query: "nordic books" })
+{ "results": [ { "id": "lead:k57...", "title": "Mika Virtanen \u00b7 Nordic Books Oy", "url": "https://app.selda.ai/workspace-..." } ] }
+
+// fetch({ id: "lead:k57..." })
+{ "id": "lead:k57...", "title": "Mika Virtanen \u00b7 Nordic Books Oy", "text": "Name: ...\nResearch: ...",
+  "url": "...", "metadata": { "kind": "lead", "draftWaitingForApproval": true } }
+```
+
+They are a read-only view over the same workspace the `selda_*` tools reach: leads, projects and
+Brain items. Ids are `lead:...`, `project:...` and `brain:...`, and every id `search` returns is
+one `fetch` accepts. An id of any other shape is a tool error, not an empty result. Neither of
+them writes anything, and nothing on this connector sends a message.
+
 ### A static key, for Claude Code, scripts and CI
 
 Create a key in the Selda app under **Settings → Connections → MCP server**. The full key is shown

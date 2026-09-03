@@ -6,6 +6,29 @@ breaks loudly, so anything that can break yours is recorded here.
 The live capability manifest at `GET /mcp/capabilities` is always the authority on what exists
 right now. This file exists to tell you what moved.
 
+## 2026-09-03
+
+**The connector works from ChatGPT.** Everything it needs was already here and none of it was the
+problem: Streamable HTTP, JSON-RPC, OAuth with dynamic client registration and PKCE. Two things
+kept ChatGPT out.
+
+OpenAI's connector contract requires two tools by NAME, `search` and `fetch`, with fixed argument
+and result shapes. A server without them connects and then has nothing ChatGPT will call. Both are
+served now. They are a read-only view over what the `selda_*` tools already reach (leads, projects,
+Brain items), not a second data path: `search({query})` returns `{results:[{id,title,url}]}` and
+`fetch({id})` returns `{id,title,text,url,metadata}`. Ids are `lead:...`, `project:...` and
+`brain:...`, and every id `search` returns is one `fetch` accepts.
+
+`initialize` used to answer a fixed `2025-03-26` to every handshake, including the `2025-06-18`
+that ChatGPT and current Claude builds open with. A client is allowed to hang up on a version it
+did not ask for. It now echoes yours when it is one of the three supported versions.
+
+**Nothing else moved.** No `selda_*` tool changed, no capability was added or removed, and
+`GET /mcp/capabilities` still returns the same 72 functions: `search` and `fetch` are a view over
+the existing ones and are not capabilities of their own. Nothing here sends, as before.
+
+Server version is now `0.4.0`, readable without a key at `GET https://mcp.selda.ai/api/mcp`.
+
 ## 2026-08-30
 
 **MCP and the API are on every plan, the free one included.** Creating a key was never gated on a

@@ -73,7 +73,7 @@ them writes anything, and nothing on this connector sends a message.
 
 ### A static key, for Claude Code, scripts and CI
 
-Create a key in the Selda app under **Settings → Connections → MCP server**. The full key is shown
+Create a key in the Selda app under **Settings → Apps → Selda MCP**. The full key is shown
 once.
 
 ```bash

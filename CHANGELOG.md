@@ -88,7 +88,7 @@ no MCP tool, so a client could not see them. Nothing about what they do changed:
 **`events.ingest` takes `autoAdvance`.** With it, an arriving lead does not just get stored: Selda
 reads the workspace's Brain, writes the reply in the language the enquiry was written in, and leaves
 it in the Sales Inbox. It sends nothing. Off by default, because it spends. With no Brain material
-to answer from it drafts nothing and reports `no_brain_material` — an invented price approved by
+to answer from it drafts nothing and reports `no_brain_material`, an invented price approved by
 somebody who assumed Selda knew the real one is worse than no draft.
 
 **Two new webhook events: `draft.ready` and `draft.failed`.** Every other event reports what already
@@ -102,7 +102,7 @@ kept alongside, so nothing is dropped and no integration has to transliterate on
 
 **`leads.skip` now says that it deletes.** Its summary read "Skip a lead (legacy path)" while the
 function removed the lead and every message on it. Behaviour unchanged; the description was wrong.
-It also needs a Clerk session and cannot be reached by any API key — use `leads.delete`.
+It also needs a Clerk session and cannot be reached by any API key, use `leads.delete`.
 
 ## 2026-08-06
 

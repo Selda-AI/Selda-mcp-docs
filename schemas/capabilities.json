@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-30",
-  "source": "GET /mcp/capabilities — derived from the same dispatch tables the endpoints run on",
+  "generated": "2026-09-03",
+  "source": "GET /mcp/capabilities, derived from the same dispatch tables the endpoints run on",
   "note": "Every fn is POSTed to its endpoint as { fn, args } with Authorization: Bearer sk_test_… or sk_live_… . The key binds the call to one workspace org; never pass orgId yourself. TEST KEYS ARE FREE and are not gated on a plan or an invoice: you can build the whole integration, push in leads, knowledge and events, read everything back and edit drafts, on any plan. The entries marked sandboxAllowed:false are the ones that spend real money or reach real people (contact lookup, enrichment, connector sync, running the engine): those need a live workspace on a paid plan, and each one states its reason in liveOnlyReason. Nothing in this list sends outreach: sending happens only in the Selda app, after a human approves.",
   "count": 72,
   "capabilities": [
@@ -248,7 +248,7 @@
       "fn": "events.ingest",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Report that something happened outside Selda (a form, an analysis, an ad response). Creates the lead if new, recognises it if known, records it on the timeline, and can put it on a campaign's review list. Pass autoAdvance to have Selda write the reply from the Brain straight away and leave it in the Sales Inbox — draft.ready is published when it is there. It never sends.",
+      "summary": "Report that something happened outside Selda (a form, an analysis, an ad response). Creates the lead if new, recognises it if known, records it on the timeline, and can put it on a campaign's review list. Pass autoAdvance to have Selda write the reply from the Brain straight away and leave it in the Sales Inbox, draft.ready is published when it is there. It never sends.",
       "mcpTools": [
         "selda_ingest_event"
       ],
@@ -320,7 +320,7 @@
       "fn": "replies.draft",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Write a reply draft into a lead's Sales Inbox thread. A person reviews and sends it in the app — this can send nothing.",
+      "summary": "Write a reply draft into a lead's Sales Inbox thread. A person reviews and sends it in the app, this can send nothing.",
       "mcpTools": [
         "selda_draft_reply"
       ],
@@ -368,7 +368,7 @@
       "fn": "leads.delete",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Remove one lead. Deleting is the caller's act — Selda never removes a lead on its own.",
+      "summary": "Remove one lead. Deleting is the caller's act, Selda never removes a lead on its own.",
       "mcpTools": [
         "selda_delete_lead"
       ],
@@ -478,7 +478,7 @@
       "fn": "runs.archive",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Close a campaign run and take it off the active list. Keeps every contact and every message — deleting contacts stays a human act in the app.",
+      "summary": "Close a campaign run and take it off the active list. Keeps every contact and every message, deleting contacts stays a human act in the app.",
       "mcpTools": [
         "selda_archive_run"
       ],
@@ -690,7 +690,7 @@
       "fn": "runs.confirmCompanies",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Confirm a run's company list so Selda finds the decision-makers and drafts the messages. Spends credits. Sends nothing — the send is still a human press in the app.",
+      "summary": "Confirm a run's company list so Selda finds the decision-makers and drafts the messages. Spends credits. Sends nothing, the send is still a human press in the app.",
       "mcpTools": [
         "selda_confirm_companies"
       ],
@@ -702,7 +702,7 @@
       "fn": "leads.updateStatus",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Set a lead's status (legacy path, Clerk-authenticated — an API key cannot reach this; the MCP tool uses the org-scoped leads.update).",
+      "summary": "Set a lead's status (legacy path, Clerk-authenticated, an API key cannot reach this; the MCP tool uses the org-scoped leads.update).",
       "mcpTools": [],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
@@ -712,7 +712,7 @@
       "fn": "leads.skip",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "DELETES a lead and every message on it (legacy path, Clerk-authenticated — an API key cannot reach this; use leads.delete instead).",
+      "summary": "DELETES a lead and every message on it (legacy path, Clerk-authenticated, an API key cannot reach this; use leads.delete instead).",
       "mcpTools": [],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
@@ -812,7 +812,7 @@
       "fn": "runs.startFromLeads",
       "endpoint": "/mcp/run",
       "scope": "pipeline",
-      "summary": "Start a campaign from leads already pushed in with selda_add_lead, selected by the source label you gave them. No discovery — Selda writes a message per lead from the analysis that came with it, and stops at the drafts.",
+      "summary": "Start a campaign from leads already pushed in with selda_add_lead, selected by the source label you gave them. No discovery, Selda writes a message per lead from the analysis that came with it, and stops at the drafts.",
       "mcpTools": [
         "selda_start_campaign_from_leads"
       ],

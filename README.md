@@ -37,25 +37,60 @@ the human decides.
 
 ## Connect
 
-### OAuth, recommended for Claude.ai, ChatGPT and Cursor
-
-Add this as a custom connector:
+### Copy this, paste it into your tool
 
 ```
 https://mcp.selda.ai/api/mcp
 ```
 
-The server advertises OAuth, so the client walks you through logging in and picking a workspace.
-Nothing to paste.
+Nothing to install, no key to create. Find where your tool asks for an "MCP server" or a
+"connector", paste that address, log in with the Selda account you already use, and pick which
+workspace it may reach.
+
+| Tool | Where the box is |
+|------|------------------|
+| **ChatGPT** | Settings → Connectors → Add |
+| **Claude** (claude.ai or desktop) | Settings → Connectors → Add custom connector |
+| **Cursor** | Settings → MCP → Add new MCP server, or `~/.cursor/mcp.json` |
+| **VS Code** | `.vscode/mcp.json` in the project |
+| **Gemini CLI** | `~/.gemini/settings.json` |
+| **Anything else** | Look for "MCP", "Connectors" or "Add an app" |
+
+For the ones that take a file:
+
+```json
+{
+  "mcpServers": {
+    "selda": { "type": "http", "url": "https://mcp.selda.ai/api/mcp" }
+  }
+}
+```
+
+Gemini CLI uses `httpUrl` instead of `type` + `url`:
+
+```json
+{ "mcpServers": { "selda": { "httpUrl": "https://mcp.selda.ai/api/mcp" } } }
+```
+
+Then ask your assistant **"List my Selda projects"**. If it answers with your workspaces, you are
+done.
 
 `initialize` echoes your protocol version when it is one of `2025-06-18`, `2025-03-26` or
-`2024-11-05`, so any current client connects without negotiating down.
+`2024-11-05`, so nothing current has to negotiate down.
 
-#### In ChatGPT
+**If it does not connect**, run this. It needs no key and no login:
 
-**Settings → Connectors → Add**, same address. ChatGPT only calls a connector that exposes two
-tools named `search` and `fetch`, with fixed shapes. Selda exposes both, so there is nothing extra
-to do:
+```bash
+curl https://mcp.selda.ai/api/mcp
+```
+
+You should get `{"name":"selda","version":"...","status":"ok"}`. If you do, the address is right
+and the problem is in your tool's config.
+
+#### ChatGPT specifically
+
+ChatGPT only calls a connector that exposes two tools named `search` and `fetch`, with fixed
+shapes. Selda exposes both, so there is nothing extra to do:
 
 ```jsonc
 // search({ query: "nordic books" })
@@ -68,8 +103,10 @@ to do:
 
 They are a read-only view over the same workspace the `selda_*` tools reach: leads, projects and
 Brain items. Ids are `lead:...`, `project:...` and `brain:...`, and every id `search` returns is
-one `fetch` accepts. An id of any other shape is a tool error, not an empty result. Neither of
-them writes anything, and nothing on this connector sends a message.
+one `fetch` accepts. An id of any other shape is a tool error, not an empty result. When `search`
+could not read every project it says so in an `incomplete` field rather than returning a short list
+that reads as the whole truth. Neither tool writes anything, and nothing on this connector sends a
+message.
 
 ### A static key, for Claude Code, scripts and CI
 

@@ -27,6 +27,14 @@ did not ask for. It now echoes yours when it is one of the three supported versi
 `GET /mcp/capabilities` still returns the same 72 functions: `search` and `fetch` are a view over
 the existing ones and are not capabilities of their own. Nothing here sends, as before.
 
+**`search` no longer answers "nothing" when it only looked at some of your projects.** Found by
+running it against a real workspace rather than a test double: a workspace with nine projects
+returned `{"results": []}` for a lead sitting in the seventh, because the scan stopped at five and
+said nothing about the rest. An empty result set and "I did not look" read as the same sentence.
+The bound is 25 projects now, and when it bites the payload carries an `incomplete` field naming
+how many were skipped and telling you to pass `projectId`. The same applies to a project whose
+listing failed and to a result set truncated at 100.
+
 Server version is now `0.4.0`, readable without a key at `GET https://mcp.selda.ai/api/mcp`.
 
 ## 2026-08-30

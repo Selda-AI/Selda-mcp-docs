@@ -2,9 +2,9 @@
 
 Connect an AI client to a [Selda](https://selda.ai) workspace.
 
-Others give you a list. Selda gets you the conversation: you say who you want, and it finds the
-right people, writes each message from real research, and carries the thread to a customer, a
-quote, or a meeting. A person approves every send. This repository is the machine readable
+Others sell you a tool. Selda builds your sales machine: it watches for the moment worth reaching
+out, researches each company, writes the message in your customer's language, sends it from your own
+inbox and brings the reply back to you. A person approves every send. This repository is the machine readable
 documentation for driving that engine from outside the app, over the
 [Model Context Protocol](https://modelcontextprotocol.io) or plain HTTP.
 
@@ -24,6 +24,8 @@ When the two disagree, the live capability manifest described below is right.
 | Run the full pipeline from a brief and read the drafts it produced | `selda_run_pipeline`, then poll `selda_get_run_status` |
 | Receive replies as they arrive instead of polling | Register an outbound webhook for `reply.received` |
 | Have an arriving enquiry answered before anyone looks at it | `selda_ingest_event` with `autoAdvance`, then listen for `draft.ready` |
+| Put a picture in a message, a different one per lead | `mediaImageUrl` on `selda_add_lead` / `selda_add_leads` / `selda_ingest_event`, with `mediaLinkUrl` to make it clickable |
+| Send a file with a message, or with every message in a campaign | `selda_upload_file`, then `selda_attach_files` with a `leadId` or a `runId` |
 | Clear the rows a trial install left behind | `selda_delete_lead`, or `selda_merge_leads` for a duplicate |
 
 ## What you cannot do with it, on purpose

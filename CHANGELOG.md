@@ -6,6 +6,32 @@ breaks loudly, so anything that can break yours is recorded here.
 The live capability manifest at `GET /mcp/capabilities` is always the authority on what exists
 right now. This file exists to tell you what moved.
 
+## 2026-09-15
+
+**A picture can travel with a lead, and it can be a different picture for each one.**
+`selda_add_lead`, `selda_add_leads` and `selda_ingest_event` take `mediaImageUrl` and
+`mediaLinkUrl` (plus `mediaAlt` and `mediaWidth`). The case this exists for is one call: you have
+just analysed a company, rendered a gif of what you found, and you report the company and the
+picture together. The picture is written into THAT lead's draft when the message is composed, so it
+is in the text a human reads before approving, and it beats a picture set on the whole campaign.
+
+Public `https` only, and this is worth knowing before you build against it: a `data:` base64
+address is refused. That advice is right for a web page and wrong for email — Gmail shows no
+`data:` image in a message body at all, and the size base64 adds truncates the message near 102 kB,
+which cuts off the end where your link and your question are. Host the file and send its address.
+
+**A picture never costs you the lead.** An address that cannot be used is dropped, the lead is
+created anyway, and the response says in words what was not kept and why (`mediaRejected`).
+
+`selda_attach_files` takes `linksTo` per file, so the ready-made markdown snippet it hands back
+comes as a picture wrapped in a link rather than a bare picture you would wrap yourself.
+
+**Seven functions were live and missing from `schemas/capabilities.json`** — the attachment surface
+(`drafts.attach`, `drafts.attachments`, `drafts.detach`, `runs.attach`, `runs.detach`) and signals
+(`signals.list`, `signals.startCampaign`). Nothing about them changed; the snapshot in this
+repository had gone stale. It is regenerated from the live manifest, which is why that manifest and
+not this file is the authority.
+
 ## 2026-08-30
 
 **MCP and the API are on every plan, the free one included.** Creating a key was never gated on a

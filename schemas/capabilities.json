@@ -1,8 +1,8 @@
 {
-  "generated": "2026-08-30",
+  "generated": "2026-09-15",
   "source": "GET /mcp/capabilities — derived from the same dispatch tables the endpoints run on",
   "note": "Every fn is POSTed to its endpoint as { fn, args } with Authorization: Bearer sk_test_… or sk_live_… . The key binds the call to one workspace org; never pass orgId yourself. TEST KEYS ARE FREE and are not gated on a plan or an invoice: you can build the whole integration, push in leads, knowledge and events, read everything back and edit drafts, on any plan. The entries marked sandboxAllowed:false are the ones that spend real money or reach real people (contact lookup, enrichment, connector sync, running the engine): those need a live workspace on a paid plan, and each one states its reason in liveOnlyReason. Nothing in this list sends outreach: sending happens only in the Selda app, after a human approves.",
-  "count": 72,
+  "count": 79,
   "capabilities": [
     {
       "fn": "projects.list",
@@ -47,6 +47,18 @@
       "summary": "Read what a campaign's message is made of: every block, which ones ship verbatim, the instruction behind each generated one, the shape, and whether it is locked.",
       "mcpTools": [
         "selda_get_message_structure"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "drafts.attachments",
+      "endpoint": "/mcp/query",
+      "scope": "read",
+      "summary": "The files one draft would send (campaign files included, in send order) or the files a campaign gives every message. Each with a url.",
+      "mcpTools": [
+        "selda_list_attachments"
       ],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
@@ -116,7 +128,7 @@
       "fn": "runs.list",
       "endpoint": "/mcp/query",
       "scope": "read",
-      "summary": "Every campaign run in a project, newest first, with its status. Use it to find a runId you no longer have.",
+      "summary": "Every campaign run in a project, newest first, with its status. Use it to find a runId you no longer have. Runs the human archived are left out; pass includeArchived: true to see them too.",
       "mcpTools": [
         "selda_list_runs"
       ],
@@ -248,7 +260,7 @@
       "fn": "events.ingest",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Report that something happened outside Selda (a form, an analysis, an ad response). Creates the lead if new, recognises it if known, records it on the timeline, and can put it on a campaign's review list. Pass autoAdvance to have Selda write the reply from the Brain straight away and leave it in the Sales Inbox — draft.ready is published when it is there. It never sends.",
+      "summary": "Report that something happened outside Selda (a form, an analysis, an ad response). Creates the lead if new, recognises it if known, records it on the timeline, and can put it on a campaign's review list. Pass autoAdvance to have Selda write the reply from the Brain straight away and leave it in the Sales Inbox, draft.ready is published when it is there. It never sends.",
       "mcpTools": [
         "selda_ingest_event"
       ],
@@ -320,7 +332,7 @@
       "fn": "replies.draft",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Write a reply draft into a lead's Sales Inbox thread. A person reviews and sends it in the app — this can send nothing.",
+      "summary": "Write a reply draft into a lead's Sales Inbox thread. A person reviews and sends it in the app, this can send nothing.",
       "mcpTools": [
         "selda_draft_reply"
       ],
@@ -368,7 +380,7 @@
       "fn": "leads.delete",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Remove one lead. Deleting is the caller's act — Selda never removes a lead on its own.",
+      "summary": "Remove one lead. Deleting is the caller's act, Selda never removes a lead on its own.",
       "mcpTools": [
         "selda_delete_lead"
       ],
@@ -478,7 +490,7 @@
       "fn": "runs.archive",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Close a campaign run and take it off the active list. Keeps every contact and every message — deleting contacts stays a human act in the app.",
+      "summary": "Close a campaign run and take it off the active list. Keeps every contact and every message, deleting contacts stays a human act in the app.",
       "mcpTools": [
         "selda_archive_run"
       ],
@@ -493,6 +505,30 @@
       "summary": "Give a campaign run a name a person would recognise. An empty name restores the derived title.",
       "mcpTools": [
         "selda_rename_campaign"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "drafts.detach",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Take one file off ONE draft. A campaign-level file is left out of this message only, everybody else keeps it. The bytes are never deleted.",
+      "mcpTools": [
+        "selda_remove_attachment"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "runs.detach",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Take one file off a campaign. Every unsent message loses it; sent messages keep their record. The bytes are never deleted.",
+      "mcpTools": [
+        "selda_remove_attachment"
       ],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
@@ -558,7 +594,7 @@
       "fn": "brain.add",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Add one thing Selda should know: a product, a partner, a reference, a company fact, a note, or something it must never say.",
+      "summary": "Add one thing Selda should know: a product, a partner, a reference, a company fact, a note, something it must never say, or a `writing_rule` — a standing instruction about HOW messages are written, which reaches the composer as a directive and is never quoted as material.",
       "mcpTools": [
         "selda_add_brain_item"
       ],
@@ -690,9 +726,33 @@
       "fn": "runs.confirmCompanies",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Confirm a run's company list so Selda finds the decision-makers and drafts the messages. Spends credits. Sends nothing — the send is still a human press in the app.",
+      "summary": "Confirm a run's company list so Selda finds the decision-makers and drafts the messages. Spends credits. Sends nothing, the send is still a human press in the app.",
       "mcpTools": [
         "selda_confirm_companies"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": false,
+      "liveOnlyReason": "paid_engine_run"
+    },
+    {
+      "fn": "signals.list",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "The signals Selda has found for a workspace, newest first. Read-only: it changes nothing and spends nothing.",
+      "mcpTools": [
+        "selda_list_signals"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "signals.startCampaign",
+      "endpoint": "/mcp/mutate",
+      "scope": "write",
+      "summary": "Turn chosen signals into a campaign run. Holds at the company list unless told otherwise. Spends credits. Sends nothing, the send is still a human press in the app.",
+      "mcpTools": [
+        "selda_start_campaign_from_signals"
       ],
       "requiresEntitlement": null,
       "sandboxAllowed": false,
@@ -702,7 +762,7 @@
       "fn": "leads.updateStatus",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "Set a lead's status (legacy path, Clerk-authenticated — an API key cannot reach this; the MCP tool uses the org-scoped leads.update).",
+      "summary": "Set a lead's status (legacy path, Clerk-authenticated, an API key cannot reach this; the MCP tool uses the org-scoped leads.update).",
       "mcpTools": [],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
@@ -712,7 +772,7 @@
       "fn": "leads.skip",
       "endpoint": "/mcp/mutate",
       "scope": "write",
-      "summary": "DELETES a lead and every message on it (legacy path, Clerk-authenticated — an API key cannot reach this; use leads.delete instead).",
+      "summary": "DELETES a lead and every message on it (legacy path, Clerk-authenticated, an API key cannot reach this; use leads.delete instead).",
       "mcpTools": [],
       "requiresEntitlement": null,
       "sandboxAllowed": true,
@@ -812,13 +872,37 @@
       "fn": "runs.startFromLeads",
       "endpoint": "/mcp/run",
       "scope": "pipeline",
-      "summary": "Start a campaign from leads already pushed in with selda_add_lead, selected by the source label you gave them. No discovery — Selda writes a message per lead from the analysis that came with it, and stops at the drafts.",
+      "summary": "Start a campaign from leads already pushed in with selda_add_lead, selected by the source label you gave them. No discovery, Selda writes a message per lead from the analysis that came with it, and stops at the drafts.",
       "mcpTools": [
         "selda_start_campaign_from_leads"
       ],
       "requiresEntitlement": null,
       "sandboxAllowed": false,
       "liveOnlyReason": "paid_engine_run"
+    },
+    {
+      "fn": "drafts.attach",
+      "endpoint": "/mcp/run",
+      "scope": "pipeline",
+      "summary": "Attach files to ONE draft, by public https url or by storageId, on top of what the campaign already gives it. Refuses a message that already went out; never sends.",
+      "mcpTools": [
+        "selda_attach_files"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
+    },
+    {
+      "fn": "runs.attach",
+      "endpoint": "/mcp/run",
+      "scope": "pipeline",
+      "summary": "Attach files to EVERY message in a campaign that has not gone out yet, by public https url or by storageId. Messages already sent keep exactly what they carried.",
+      "mcpTools": [
+        "selda_attach_files"
+      ],
+      "requiresEntitlement": null,
+      "sandboxAllowed": true,
+      "liveOnlyReason": null
     },
     {
       "fn": "material.import",
@@ -836,9 +920,10 @@
       "fn": "POST /mcp/material/upload",
       "endpoint": "/mcp/material/upload",
       "scope": "pipeline",
-      "summary": "Raw file bytes in, storageId out. Send the file's path in X-Selda-Path. That path is how Selda maps a file to a company. Then hand the ids to material.import.",
+      "summary": "Raw file bytes in, storageId and a public url out. Send the file's path in X-Selda-Path, which is how Selda maps material to a company. Then hand the ids to material.import, or to drafts.attach / runs.attach for a file that goes out WITH a message. For an image the url is also what a picture placed in the body needs.",
       "mcpTools": [
-        "selda_upload_material"
+        "selda_upload_material",
+        "selda_upload_file"
       ],
       "requiresEntitlement": null,
       "sandboxAllowed": true,

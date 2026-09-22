@@ -5,9 +5,9 @@ description: Drive a Selda go-to-market workspace. Use when the user wants to fi
 
 # Selda workspace
 
-Others give you a list. Selda gets you the conversation: it works out who to reach, researches each
-company, writes every message from that research, and carries the thread to a customer, a quote, or
-a meeting. A person approves every send. The app is at https://app.selda.ai. Every call is scoped
+Others sell you a tool. Selda builds your sales machine: it watches for the moment worth reaching
+out, researches each company, writes every message from that research, sends it from the user's own
+inbox and brings the reply back. A person approves every send. The app is at https://app.selda.ai. Every call is scoped
 to the organization that owns the API key, so never pass `orgId` or `userId`.
 
 ## Golden rules

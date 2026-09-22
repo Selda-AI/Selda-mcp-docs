@@ -6,6 +6,24 @@ breaks loudly, so anything that can break yours is recorded here.
 The live capability manifest at `GET /mcp/capabilities` is always the authority on what exists
 right now. This file exists to tell you what moved.
 
+## 2026-09-22
+
+**Nothing in the tool surface changed. `docs.selda.ai` stopped documenting one part of it.** The
+seven flow tools (`selda_list_flows`, `selda_flow_runs`, `selda_create_flow`, `selda_update_flow`,
+`selda_set_flow_enabled`, `selda_delete_flow`, `selda_save_flow_skill`) are no longer listed on the
+documentation site, because they belong to a feature in invite-only early access and a public
+reference to something almost nobody can reach reads as a promise rather than a document.
+
+**They are still served and they are still in `schemas/capabilities.json` here.** That file is a
+snapshot of `GET /mcp/capabilities`, and the manifest lists everything the dispatcher answers, which
+is exactly what makes it the authority. A snapshot that quietly dropped rows its own source still
+returns would be worse than useless. If your client enumerates tools at connect time, it will see
+all of them; if you are in the early-access programme, keep calling them.
+
+**Corrected: `skills/selda-workspace/SKILL.md` carried a headline retired on 13.9.2026** ("Others
+give you a list. Selda gets you the conversation"). The README had been updated and the skill had
+not, so an AI client loading the skill was being briefed on the old positioning.
+
 ## 2026-09-15
 
 **A picture can travel with a lead, and it can be a different picture for each one.**

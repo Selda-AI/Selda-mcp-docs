@@ -110,6 +110,13 @@ changes behaviour would appear, so prefer it in something long-lived.
 The body is always `{ "fn": "...", "args": { ... } }`. A success is `{ "value": … }`; a failure is
 `{ "error": { "type", "code", "message", "request_id" } }` with a non-200 status.
 
+**There is also a URL per operation**, if that is what your client wants: `GET /v1/leads`,
+`POST /v1/leads`, `POST /v1/runs/{runId}/confirm-companies` and sixty-odd more, with an OpenAPI 3.1
+document. Same dispatcher, same key check, same scope check, same refusals, so neither form can
+reach what the other declines. That surface is documented in
+[Selda-rest-api](https://github.com/Selda-AI/selda-rest-api). Use it when you are writing code;
+use this repository when you are connecting an AI client.
+
 Discover the base URL and the current function list from the manifest rather than hardcoding
 either. See [`examples/`](examples/) for a client that does exactly that in about forty lines.
 
